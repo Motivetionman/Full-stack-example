@@ -11,6 +11,7 @@ npm install -D jest supertest
 cd web-app
 npm install
 npm install -D tailwindcss@3.4.17 postcss autoprefixer
+
 2. วิธี Run
 
 Database: เปิด XAMPP > Start MySQL
