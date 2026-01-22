@@ -1,4 +1,4 @@
-คำสั่งสำหรับ Run งาน (แปะไปใน Readme ได้)
+
 1. ติดตั้ง Dependencies
 
 Bash
