@@ -1,0 +1,71 @@
+<script setup>
+import { ref, onMounted } from 'vue';
+
+const tasks = ref([]);
+const error = ref('');
+const isDark = ref(false);
+
+// โหลดข้อมูลจาก Backend
+const loadTasks = async () => {
+  try {
+    const res = await fetch('http://localhost:3000/tasks');
+    if (!res.ok) throw new Error('Cannot connect to API');
+    tasks.value = await res.json();
+  } catch (err) {
+    error.value = err.message;
+  }
+};
+
+// สลับ Dark Mode
+const toggleTheme = () => {
+  isDark.value = !isDark.value;
+  document.documentElement.classList.toggle('dark', isDark.value);
+};
+
+onMounted(loadTasks);
+</script>
+
+<template>
+  <div class="min-h-screen transition-colors duration-300 bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 font-sans p-8">
+    <div class="max-w-2xl mx-auto">
+      
+      <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-600">
+          Task Manager AI
+        </h1>
+        <button @click="toggleTheme" 
+          class="px-4 py-2 rounded-full font-bold shadow-lg transition-transform hover:scale-105"
+          :class="isDark ? 'bg-yellow-400 text-gray-900' : 'bg-gray-800 text-white'">
+          {{ isDark ? '🌞 Light' : '🌙 Dark' }}
+        </button>
+      </div>
+
+      <div v-if="error" class="mb-6 p-4 bg-red-100 text-red-700 rounded-lg dark:bg-red-900 dark:text-red-200">
+        ❌ Connection Error: {{ error }}
+      </div>
+
+      <div class="space-y-4">
+        <div v-if="tasks.length === 0 && !error" class="text-center text-gray-500 animate-pulse">
+          ⏳ Loading data...
+        </div>
+
+        <div v-for="task in tasks" :key="task.id" 
+             class="p-5 rounded-xl shadow border bg-white border-gray-100 dark:bg-gray-800 dark:border-gray-700">
+          <div class="flex justify-between items-start">
+            <h3 class="text-xl font-semibold">{{ task.title }}</h3>
+            <span class="px-2 py-1 text-xs rounded uppercase font-bold"
+                  :class="task.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'">
+              {{ task.status }}
+            </span>
+          </div>
+          <p class="text-gray-600 dark:text-gray-400 mt-2">{{ task.description }}</p>
+        </div>
+      </div>
+
+      <button @click="loadTasks" class="mt-8 w-full py-3 rounded-lg border-2 border-dashed border-gray-300 text-gray-500 hover:border-blue-500 hover:text-blue-500 transition-colors">
+        🔄 Refresh Data
+      </button>
+
+    </div>
+  </div>
+</template>
