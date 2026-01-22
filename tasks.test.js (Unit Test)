@@ -1,0 +1,20 @@
+const request = require('supertest');
+const app = require('./app');
+
+describe('System Test', () => {
+    it('POST /tasks - ควรสร้างงานใหม่ได้สำเร็จ', async () => {
+        const newTask = {
+            title: "Test Task",
+            description: "Testing via Jest",
+            status: "pending"
+        };
+        const res = await request(app).post('/tasks').send(newTask);
+        expect(res.statusCode).toBe(201);
+        expect(res.body.title).toBe("Test Task");
+    });
+
+    it('POST /tasks - ควร Error ถ้าไม่ใส่ Title', async () => {
+        const res = await request(app).post('/tasks').send({});
+        expect(res.statusCode).toBe(400);
+    });
+});
